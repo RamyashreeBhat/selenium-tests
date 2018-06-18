@@ -1,18 +1,18 @@
 package com.wikia.webdriver.common.core.networktrafficinterceptor;
 
-import java.net.InetSocketAddress;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.wikia.webdriver.common.logging.Log;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
 import net.lightbody.bmp.core.har.HarEntry;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriverException;
+
+import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NetworkTrafficInterceptor extends BrowserMobProxyServer {
 
@@ -102,5 +102,32 @@ public class NetworkTrafficInterceptor extends BrowserMobProxyServer {
     } catch (Exception ex) {
       throw new WebDriverException(ex);
     }
+  }
+
+  public HarEntry waitForEntryByUrlPattern(String pattern) {
+    final Duration sleepDuration = Duration.ofMillis(500);
+    final Duration timeout = Duration.ofSeconds(30);
+
+    Duration alreadyWaited = Duration.ofSeconds(0);
+    HarEntry entry = getEntryByUrlPattern(pattern);
+
+    while(entry == null && !alreadyWaited.equals(timeout)) {
+      try {
+        Thread.sleep(sleepDuration.toMillis());
+        alreadyWaited = alreadyWaited.plus(sleepDuration);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+      entry = getEntryByUrlPattern(pattern);
+    }
+
+    Log.log(
+      "Network",
+      "URL " + pattern + (entry == null ? " not" : "") + " found after " + alreadyWaited.getSeconds() + "s",
+      true
+    );
+
+    return entry;
   }
 }

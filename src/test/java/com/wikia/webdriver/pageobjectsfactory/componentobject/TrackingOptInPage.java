@@ -3,6 +3,7 @@ package com.wikia.webdriver.pageobjectsfactory.componentobject;
 import com.wikia.webdriver.common.core.Assertion;
 import com.wikia.webdriver.common.core.WikiaWebDriver;
 import com.wikia.webdriver.common.core.configuration.Configuration;
+import com.wikia.webdriver.common.core.helpers.Geo;
 import com.wikia.webdriver.common.core.networktrafficinterceptor.NetworkTrafficInterceptor;
 import com.wikia.webdriver.common.core.url.Page;
 import com.wikia.webdriver.common.core.url.UrlBuilder;
@@ -11,6 +12,7 @@ import com.wikia.webdriver.elements.common.TrackingOptInModal;
 import com.wikia.webdriver.pageobjectsfactory.pageobject.BasePageObject;
 import net.lightbody.bmp.core.har.HarEntry;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.WebDriver;
 
 import java.time.Duration;
 import java.util.List;
@@ -19,10 +21,14 @@ public class TrackingOptInPage extends BasePageObject {
 
   private TrackingOptInModal modal = new TrackingOptInModal(this);
   private static final Duration WAITING_TIME_FOR_ALL_REQUESTS = Duration.ofSeconds(10);
-  private static final String MODAL_INSTANT_GLOBAL = "InstantGlobals.wgEnableTrackingOptInModal=1";
   private static final String EU_CONTINENT = "EU";
+  private static final String MODAL_INSTANT_GLOBAL = "InstantGlobals.wgEnableTrackingOptInModal=1";
 
-  public static void setGeoCookie(WikiaWebDriver driver, String continent, String country) {
+  public static void setGeoCookie(WebDriver driver, Geo geo) {
+    setGeoCookie(driver, geo.getContinent(), geo.getCountry());
+  }
+
+  public static void setGeoCookie(WebDriver driver, String continent, String country) {
     Cookie geoCookie = driver.manage().getCookieNamed("Geo");
     driver.manage().deleteCookie(geoCookie);
     driver.manage().addCookie(new Cookie(
@@ -53,10 +59,9 @@ public class TrackingOptInPage extends BasePageObject {
     modal.clickAcceptButton();
   }
 
-  public void acceptOptInModal(WikiaWebDriver driver, String country, Page page,
-                               String[] instantGlobals) {
+  public void acceptOptInModal(WikiaWebDriver driver, String country, Page page, String[] instantGlobals) {
     setGeoCookie(driver, EU_CONTINENT, country);
-    getUrl(urlWithInstantGlobals(instantGlobals, page));
+    page.getUrl(instantGlobals);
     modal.clickAcceptButton();
   }
 
@@ -66,8 +71,7 @@ public class TrackingOptInPage extends BasePageObject {
     modal.clickRejectButton();
   }
 
-  public void rejectOptInModal(WikiaWebDriver driver, String country, Page page,
-                               String[] instantGlobals) {
+  public void rejectOptInModal(WikiaWebDriver driver, String country, Page page, String[] instantGlobals) {
     setGeoCookie(driver, EU_CONTINENT, country);
     getUrl(urlWithInstantGlobals(instantGlobals, page));
     modal.clickRejectButton();
@@ -99,8 +103,11 @@ public class TrackingOptInPage extends BasePageObject {
   }
 
   private void isTrackingRequestSend(List<String> elementsList, NetworkTrafficInterceptor networkTrafficInterceptor) {
+    wait.forX(WAITING_TIME_FOR_ALL_REQUESTS);
     for (String anElementsList : elementsList) {
-      wait.forSuccessfulResponseByUrlPattern(networkTrafficInterceptor, anElementsList);
+      if (networkTrafficInterceptor.getEntryByUrlPattern(anElementsList) == null) {
+        wait.forSuccessfulResponseByUrlPattern(networkTrafficInterceptor, anElementsList);
+      }
     }
   }
 
@@ -133,7 +140,7 @@ public class TrackingOptInPage extends BasePageObject {
     }
   }
 
-  private static String appendTrackingOptOutParameters(String url, String[] instantGlobals) {
+  public static String appendInstantGlobals(String url, String[] instantGlobals) {
     UrlBuilder urlBuilder = UrlBuilder.createUrlBuilder();
     String newUrl = url;
 
@@ -146,7 +153,7 @@ public class TrackingOptInPage extends BasePageObject {
 
   private String urlWithInstantGlobals(String[] instantGlobals, Page page) {
     String url = urlOptInModalDisplayedOasis(page);
-    return appendTrackingOptOutParameters(url, instantGlobals);
+    return appendInstantGlobals(url, instantGlobals);
   }
 
   public void logTrackingCookieValue() {

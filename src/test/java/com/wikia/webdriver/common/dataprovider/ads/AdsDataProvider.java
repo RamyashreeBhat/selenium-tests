@@ -26,6 +26,7 @@ public class AdsDataProvider {
 
   private static final String VIDEO_PLAYER_IFRAME = " .video-player iframe";
 
+  public static final Page HOME_PAGE = new Page(WIKI_SPECIAL, "Project43_Wikia");
   public static final Page UAP_PAGE = new Page(WIKI_SPECIAL, "SyntheticTests/UAP");
   public static final Page UAP_ABCD_PAGE = new Page(WIKI_SPECIAL, "SyntheticTests/UAP/ABCD");
   public static final Page UAP_HIVI_PAGE = new Page(WIKI_SPECIAL, "SyntheticTests/UAP/HiVi");

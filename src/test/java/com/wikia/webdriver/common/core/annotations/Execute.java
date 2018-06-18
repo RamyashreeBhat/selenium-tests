@@ -1,5 +1,6 @@
 package com.wikia.webdriver.common.core.annotations;
 
+import com.wikia.webdriver.common.core.helpers.Geo;
 import com.wikia.webdriver.common.core.helpers.User;
 
 import java.lang.annotation.ElementType;
@@ -26,4 +27,6 @@ public @interface Execute {
   boolean trackingOptIn() default true;
 
   boolean trackingOptOut() default false;
+
+  Geo geoCookie() default Geo.NULL;
 }

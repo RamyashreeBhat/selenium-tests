@@ -30,17 +30,19 @@ public class TrackingOptInModal{
 
   public void clickAcceptButton() {
     try {
-      page.wait.forElementClickable(ACCEPT_BUTTON_SELECTOR).click();
+      page.wait.forElementVisible(ACCEPT_BUTTON_SELECTOR).click();
+      Log.log("Tracking modal", "Accept button clicked", true);
     } catch (Exception e) {
-      Log.log("Accept button clicked", e, false);
+      Log.log("Tracking modal", "Can't click accept button" + e, true);
     }
   }
 
   public void clickRejectButton() {
     try {
-      page.wait.forElementClickable(REJECT_BUTTON_SELECTOR).click();
+      page.wait.forElementVisible(REJECT_BUTTON_SELECTOR).click();
+      Log.log("Tracking modal", "Reject button clicked", true);
     } catch (Exception e) {
-      Log.log("Reject button clicked", e, false);
+      Log.log("Tracking modal", "Can't click reject button" + e, true);
     }
   }
 }

@@ -11,15 +11,15 @@ public class TrackingOptInDataProvider {
   private static final String ADS_KIKIMORA_OPT_IN_REJECTED_PATTERN =
       "https?://.*beacon\\.wikia-services\\.com/__track/special/adeng.*u=-1.*";
   private static final String ADS_KRUX_PATTERN = "https?://.*cdn\\.krxd\\.net.*";
-  private static final String ADS_NETZ_ATHLETEN_PATTERN =
+  public static final String ADS_NETZ_ATHLETEN_PATTERN =
       "http?://.*adadapter\\.netzathleten-media\\.de/.*/naMediaAd\\.js.*";
-  private static final String ADS_MOAT_PATTERN = "https?://.*moatads\\.com.*";
+  public static final String ADS_MOAT_PATTERN = "https?://.*moatads\\.com.*";
   private static final String ADS_PUBMATIC_PATTERN =
       "http?://.*pubmatic\\.com/AdServer.*";
   private static final String ADS_A9_PATTERN = "http?://.*amazon-adsystem\\.com/.*/apstag\\.js.*";
   private static final String ADS_COMSCORE_PATTERN = "http?://.*scorecardresearch\\.com.*";
   private static final String ADS_QUANTCAST_PATTERN = "http?://.*quantserve\\.com/.*";
-  private static final String ADS_QUANTCAST_SECURE_PATTERN = "https?://.*quantserve\\.com/.*";
+  public static final String ADS_QUANTCAST_SECURE_PATTERN = "https?://.*quantserve\\.com/.*";
   private static final String ADS_APP_NEXUS_PATTERN = "http?://.*ib\\.adnxs\\.com/.*";
   private static final String
       ADS_NORDICS_PATTERN =
@@ -28,7 +28,7 @@ public class TrackingOptInDataProvider {
   private static final String ADS_INDEX_EXCHANGE_PATTERN = "http?://.*casalemedia\\.com/cygnus.*";
   private static final String ADS_RUBBICON_FASTLANE_PATTERN =
       "http?://.*fastlane\\.rubiconproject\\.com/.*/fastlane\\.json.*";
-  public static final String ADS_GOOGLE_ANALYTICS_REJECTED_PATTERN =
+  private static final String ADS_GOOGLE_ANALYTICS_REJECTED_PATTERN =
       "https?://.*google-analytics\\.com(/r)?/collect.*aip=1.*";
   private static final String ADS_GOOGLE_ANALYTICS_PATTERN =
       "https?://.*google-analytics\\.com/collect.*";
@@ -62,11 +62,11 @@ public class TrackingOptInDataProvider {
       "wgAdDriverKruxCountries"
   };
 
-  private static final String[] ADS_NETZ_ATHLETEN_INSTANT_GLOBALS = {
+  public static final String[] ADS_NETZ_ATHLETEN_INSTANT_GLOBALS = {
       "wgAdDriverNetzAthletenCountries"
   };
 
-  private static final String[] ADS_MOAT_INSTANT_GLOBALS = {
+  public static final String[] ADS_MOAT_INSTANT_GLOBALS = {
       "wgAdDriverVideoMoatTrackingCountries",
       "wgAdDriverPorvataMoatTrackingCountries",
       "wgAdDriverVideoMoatTrackingCountries"
@@ -190,6 +190,32 @@ public class TrackingOptInDataProvider {
                 ADS_KIKIMORA_OPT_IN_ACCEPTED_PATTERN
             )
         }
+    };
+  }
+
+  @DataProvider
+  public static Object[][] newTestData() {
+    String[] emptyGlobals = {};
+    return new Object[][]{
+            // pattern, is expected, instant globals
+            {ADS_KIKIMORA_OPT_IN_ACCEPTED_PATTERN, true, ADS_KIKIMORA_INSTANT_GLOBALS},
+            {ADS_KRUX_PATTERN, true, ADS_KRUX_INSTANT_GLOBALS},
+            {ADS_PUBMATIC_PATTERN, true, ADS_PREBID_INSTANT_GLOBALS},
+            {ADS_APP_NEXUS_PATTERN, true, ADS_PREBID_INSTANT_GLOBALS},
+            {ADS_OPOENX_PATTERN, true, ADS_PREBID_INSTANT_GLOBALS},
+            {ADS_INDEX_EXCHANGE_PATTERN, true, ADS_PREBID_INSTANT_GLOBALS},
+            {ADS_RUBBICON_FASTLANE_PATTERN, true, ADS_PREBID_INSTANT_GLOBALS},
+            {ADS_A9_PATTERN, true, ADS_A9_INSTANT_GLOBALS},
+            {ADS_COMSCORE_PATTERN, true, emptyGlobals},
+            {ADS_QUANTCAST_PATTERN, true, emptyGlobals},
+            {ADS_GOOGLE_ANALYTICS_REJECTED_PATTERN, false, emptyGlobals},
+            {ADS_TLB_NPA_FIRST_PARAMETER_PATTERN, false, emptyGlobals},
+            {ADS_TLB_NPA_SECOND_PARAMETER_PATTERN, false, emptyGlobals},
+            {ADS_BLB_NPA_FIRST_PARAMETER_PATTERN, false, emptyGlobals},
+            {ADS_BLB_NPA_SECOND_PARAMETER_PATTERN, false, emptyGlobals},
+            {ADS_MOBILE_IN_CONTENT_NPA_FIRST_PARAMETER_PATTERN, false, emptyGlobals},
+            {ADS_MOBILE_IN_CONTENT_NPA_SECOND_PARAMETER_PATTERN, false, emptyGlobals},
+            {PETAMETRICS_PATTERN, true, emptyGlobals }
     };
   }
 

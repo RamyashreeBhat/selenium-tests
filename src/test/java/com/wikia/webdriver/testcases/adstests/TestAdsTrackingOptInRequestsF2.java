@@ -77,7 +77,7 @@ public class TestAdsTrackingOptInRequestsF2 extends AdsFandomTestTemplate {
 
   private AdsFandomObject loadPageWithGeo() {
     AdsFandomObject page = loadPage(FandomAdsDataProvider.PAGE_HIVI_UAP_ARTICLE);
-    TrackingOptInPage.setGeoCookie(driver, "EU", "PL");
+    TrackingOptInPage.setGeoCookie(driver, "EU", "POLAND");
     networkTrafficInterceptor.startIntercepting();
     page.refreshPage();
     return page;

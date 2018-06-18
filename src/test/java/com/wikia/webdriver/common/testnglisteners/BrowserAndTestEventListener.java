@@ -11,11 +11,13 @@ import com.wikia.webdriver.common.core.annotations.DontRun;
 import com.wikia.webdriver.common.core.annotations.Execute;
 import com.wikia.webdriver.common.core.configuration.Configuration;
 import com.wikia.webdriver.common.core.elemnt.JavascriptActions;
+import com.wikia.webdriver.common.core.helpers.Geo;
 import com.wikia.webdriver.common.core.helpers.User;
 import com.wikia.webdriver.common.core.networktrafficinterceptor.NetworkTrafficInterceptor;
 import com.wikia.webdriver.common.driverprovider.DriverProvider;
 import com.wikia.webdriver.common.logging.Log;
 import com.wikia.webdriver.common.logging.VelocityWrapper;
+import com.wikia.webdriver.pageobjectsfactory.componentobject.TrackingOptInPage;
 import com.wikia.webdriver.pageobjectsfactory.pageobject.WikiBasePageObject;
 
 import org.joda.time.DateTime;
@@ -90,28 +92,8 @@ public class BrowserAndTestEventListener extends AbstractWebDriverEventListener
        */
 
       if (TestContext.isFirstLoad()) {
-        boolean userOptedIn = true;
-        boolean userOptedOut = false;
-
-        if (method.isAnnotationPresent(Execute.class) && !method.getAnnotation(Execute.class)
-            .trackingOptIn()) {
-          userOptedIn = false;
-        }
-
-        if (method.isAnnotationPresent(Execute.class) && method.getAnnotation(Execute.class)
-            .trackingOptOut()) {
-          userOptedOut = true;
-        }
-
-        if (userOptedIn) {
-          driver.manage().addCookie(
-              new Cookie("tracking-opt-in-status", "accepted", cookieDomain, "/",
-                         cookieDate));
-        } else if (userOptedOut) {
-          driver.manage().addCookie(
-              new Cookie("tracking-opt-in-status", "rejected", cookieDomain, "/",
-                         cookieDate));
-        }
+        setGeoCookie(driver, method);
+        setOptInOutCookie(driver, method, cookieDomain, cookieDate);
       }
 
       /**
@@ -159,6 +141,39 @@ public class BrowserAndTestEventListener extends AbstractWebDriverEventListener
     }
 
     Log.logJSError();
+  }
+
+  private void setOptInOutCookie(WebDriver driver, Method method, String cookieDomain, Date cookieDate) {
+    boolean userOptedIn = true;
+    boolean userOptedOut = false;
+
+    if (method.isAnnotationPresent(Execute.class) && !method.getAnnotation(Execute.class).trackingOptIn()) {
+      userOptedIn = false;
+    }
+
+    if (method.isAnnotationPresent(Execute.class) && method.getAnnotation(Execute.class)
+        .trackingOptOut()) { userOptedOut = true;
+    }
+
+    if (userOptedIn) {
+      driver.manage().addCookie(
+          new Cookie("tracking-opt-in-status", "accepted", cookieDomain, "/",
+                     cookieDate));
+    } else if (userOptedOut) {
+      driver.manage().addCookie(
+          new Cookie("tracking-opt-in-status", "rejected", cookieDomain, "/",
+                     cookieDate));
+    }
+  }
+
+  private void setGeoCookie(WebDriver driver, Method method) {
+    if (hasGeoAnnotation(method)) {
+      TrackingOptInPage.setGeoCookie(driver, method.getAnnotation(Execute.class).geoCookie());
+    }
+  }
+
+  private boolean hasGeoAnnotation(Method method) {
+    return method.isAnnotationPresent(Execute.class) && method.getAnnotation(Execute.class).geoCookie() != Geo.NULL;
   }
 
   @Override
