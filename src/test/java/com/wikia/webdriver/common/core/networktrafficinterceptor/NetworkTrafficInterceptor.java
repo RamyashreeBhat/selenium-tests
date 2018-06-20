@@ -1,16 +1,13 @@
 package com.wikia.webdriver.common.core.networktrafficinterceptor;
 
+import com.wikia.webdriver.common.logging.Log;
 import java.net.InetSocketAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.wikia.webdriver.common.logging.Log;
 import net.lightbody.bmp.BrowserMobProxyServer;
 import net.lightbody.bmp.client.ClientUtil;
 import net.lightbody.bmp.core.har.Har;
 import net.lightbody.bmp.core.har.HarEntry;
-
-import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriverException;
 
@@ -29,7 +26,7 @@ public class NetworkTrafficInterceptor extends BrowserMobProxyServer {
   }
 
   public void startIntercepting() {
-    this.har = newHar(RandomStringUtils.random(5));
+//    this.har = newHar(RandomStringUtils.random(5));
   }
 
   public HarEntry getEntryByUrlPart(String needle) {
